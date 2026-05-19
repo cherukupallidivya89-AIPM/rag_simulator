@@ -1,228 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Divya Cherukupalli | Futuristic Resume</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --primary: #00f5ff;
-            --secondary: #9333ea;
-            --text-light: #e2e8f0;
-            --glass: rgba(255,255,255,0.05);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RAG Simulator</title>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: var(--text-light);
-            overflow-x: hidden;
-        }
+    body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        header {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
+    .container {
+        width: 95%;
+        max-width: 1200px;
+        padding: 20px;
+    }
 
-        header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            color: var(--primary);
-            text-shadow: 0 0 15px var(--primary);
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 32px;
+        letter-spacing: 1px;
+    }
 
-        header p {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            color: #94a3b8;
-        }
+    .card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        transition: 0.3s ease;
+    }
 
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: auto;
-            padding-bottom: 4rem;
-        }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
 
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
+    textarea, input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 20px var(--secondary);
-        }
+    button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #00c6ff;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
 
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
+    button:hover {
+        background: #0072ff;
+        color: white;
+    }
 
-        ul {
-            list-style: none;
-        }
+    .output {
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 14px;
+    }
 
-        ul li {
-            margin: 0.6rem 0;
-        }
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
 
-        .skills span {
-            display: inline-block;
-            background: rgba(0,245,255,0.15);
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            margin: 0.4rem;
-            border: 1px solid var(--primary);
-            font-size: 0.9rem;
-        }
+    .highlight {
+        border: 2px solid #00ffcc;
+    }
 
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            margin-top: 1.5rem;
-            border-radius: 40px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            opacity: 0.8;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background: var(--primary);
-            margin-left: 5px;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+</style>
 </head>
+
 <body>
 
-<header>
-    <h1>Divya Cherukupalli</h1>
-    <p><span id="typing"></span><span class="cursor"></span></p>
-</header>
-
 <div class="container">
+    <h1>🔍 RAG (Retrieval-Augmented Generation) Simulator</h1>
 
     <div class="card">
-        <h2>Profile</h2>
-        <p>Forward-thinking professional passionate about innovation, continuous learning, and building impactful solutions. Adept at blending creativity with analytical thinking to solve real-world challenges.</p>
+        <h3>Step 1: Add Knowledge Base</h3>
+        <textarea id="documents" rows="5" placeholder="Paste knowledge text here..."></textarea>
+        <button onclick="chunkText()">Create Chunks</button>
+        <div class="output" id="chunksOutput"></div>
     </div>
 
     <div class="card">
-        <h2>Skills</h2>
-        <div class="skills">
-            <span>Problem Solving</span>
-            <span>Communication</span>
-            <span>Leadership</span>
-            <span>Technology Enthusiast</span>
-            <span>Adaptability</span>
-            <span>Team Collaboration</span>
+        <h3>Step 2: Ask a Question</h3>
+        <input id="question" placeholder="Ask something from the knowledge base..." />
+        <button onclick="runRAG()">Run RAG</button>
+    </div>
+
+    <div class="steps">
+        <div class="card">
+            <h3>Embeddings</h3>
+            <div class="output" id="embeddingOutput"></div>
         </div>
-    </div>
 
-    <div class="card">
-        <h2>Experience</h2>
-        <ul>
-            <li><strong>Innovative Project Contributor</strong> – Led and contributed to forward-thinking initiatives integrating technology and strategy.</li>
-            <li><strong>Team Collaborator</strong> – Worked in cross-functional teams to drive measurable results and continuous improvement.</li>
-        </ul>
-    </div>
+        <div class="card">
+            <h3>Vector Search Result</h3>
+            <div class="output" id="retrievalOutput"></div>
+        </div>
 
-    <div class="card">
-        <h2>Education</h2>
-        <ul>
-            <li>Bachelor's Degree (Add Your Major & University)</li>
-        </ul>
-    </div>
+        <div class="card">
+            <h3>Augmented Prompt</h3>
+            <div class="output" id="promptOutput"></div>
+        </div>
 
-    <div class="card">
-        <h2>Contact</h2>
-        <p>Email: your.email@example.com</p>
-        <p>LinkedIn: linkedin.com/in/yourprofile</p>
-        <a href="#" class="btn">Download Resume</a>
+        <div class="card">
+            <h3>Generated Response</h3>
+            <div class="output" id="finalOutput"></div>
+        </div>
     </div>
 
 </div>
 
-<footer>
-    © 2026 Divya Cherukupalli | Designed with a Futuristic Vision
-</footer>
-
 <script>
-    const roles = [
-        "Future Innovator",
-        "Creative Thinker",
-        "Tech Enthusiast",
-        "Lifelong Learner"
-    ];
+let chunks = [];
 
-    let roleIndex = 0;
-    let charIndex = 0;
-    const typingElement = document.getElementById("typing");
+// Step 1: Chunking
+function chunkText() {
+    const text = document.getElementById("documents").value;
+    chunks = text.split(".").map(c => c.trim()).filter(c => c.length > 10);
+    document.getElementById("chunksOutput").innerHTML =
+        chunks.map((c,i) => `<p><b>Chunk ${i+1}:</b> ${c}</p>`).join("");
+}
 
-    function typeEffect() {
-        if (charIndex < roles[roleIndex].length) {
-            typingElement.textContent += roles[roleIndex].charAt(charIndex);
-            charIndex++;
-            setTimeout(typeEffect, 80);
-        } else {
-            setTimeout(eraseEffect, 1500);
-        }
+// Fake Embedding Generator
+function fakeEmbedding(text) {
+    return text.split("").reduce((acc,char) => acc + char.charCodeAt(0),0);
+}
+
+// Step 2: RAG Flow
+function runRAG() {
+    const question = document.getElementById("question").value;
+
+    if (!question || chunks.length === 0) {
+        alert("Please add documents and question first.");
+        return;
     }
 
-    function eraseEffect() {
-        if (charIndex > 0) {
-            typingElement.textContent = roles[roleIndex].substring(0, charIndex - 1);
-            charIndex--;
-            setTimeout(eraseEffect, 50);
-        } else {
-            roleIndex = (roleIndex + 1) % roles.length;
-            setTimeout(typeEffect, 300);
-        }
-    }
+    // Generate embeddings
+    const embeddings = chunks.map(c => ({
+        text: c,
+        vector: fakeEmbedding(c)
+    }));
 
-    document.addEventListener("DOMContentLoaded", () => {
-        typeEffect();
-    });
+    const questionEmbedding = fakeEmbedding(question);
+
+    document.getElementById("embeddingOutput").innerHTML =
+        embeddings.map(e => `<p>${e.vector}</p>`).join("");
+
+    // Vector Search (simple similarity)
+    let bestMatch = embeddings.reduce((prev, curr) => 
+        Math.abs(curr.vector - questionEmbedding) < 
+        Math.abs(prev.vector - questionEmbedding) ? curr : prev
+    );
+
+    document.getElementById("retrievalOutput").innerHTML =
+        `<p>${bestMatch.text}</p>`;
+
+    // Augmented Prompt
+    const augmentedPrompt = `
+Answer the question using the context below:
+
+Context:
+${bestMatch.text}
+
+Question:
+${question}
+`;
+
+    document.getElementById("promptOutput").innerText = augmentedPrompt;
+
+    // Fake LLM Response
+    const response = `Based on the retrieved context, the answer is:
+"${bestMatch.text}"
+(This simulates how an LLM would answer using retrieved knowledge.)`;
+
+    document.getElementById("finalOutput").innerText = response;
+}
 </script>
 
 </body>
