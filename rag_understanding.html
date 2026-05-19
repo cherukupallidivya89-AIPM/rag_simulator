@@ -1,1 +1,211 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RAG Simulator</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: 95%;
+        max-width: 1200px;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 32px;
+        letter-spacing: 1px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        transition: 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    textarea, input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #00c6ff;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #0072ff;
+        color: white;
+    }
+
+    .output {
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 14px;
+    }
+
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
+
+    .highlight {
+        border: 2px solid #00ffcc;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🔍 RAG (Retrieval-Augmented Generation) Simulator</h1>
+
+    <div class="card">
+        <h3>Step 1: Add Knowledge Base</h3>
+        <textarea id="documents" rows="5" placeholder="Paste knowledge text here..."></textarea>
+        <button onclick="chunkText()">Create Chunks</button>
+        <div class="output" id="chunksOutput"></div>
+    </div>
+
+    <div class="card">
+        <h3>Step 2: Ask a Question</h3>
+        <input id="question" placeholder="Ask something from the knowledge base..." />
+        <button onclick="runRAG()">Run RAG</button>
+    </div>
+
+    <div class="steps">
+        <div class="card">
+            <h3>Embeddings</h3>
+            <div class="output" id="embeddingOutput"></div>
+        </div>
+
+        <div class="card">
+            <h3>Vector Search Result</h3>
+            <div class="output" id="retrievalOutput"></div>
+        </div>
+
+        <div class="card">
+            <h3>Augmented Prompt</h3>
+            <div class="output" id="promptOutput"></div>
+        </div>
+
+        <div class="card">
+            <h3>Generated Response</h3>
+            <div class="output" id="finalOutput"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let chunks = [];
+
+// Step 1: Chunking
+function chunkText() {
+    const text = document.getElementById("documents").value;
+    chunks = text.split(".").map(c => c.trim()).filter(c => c.length > 10);
+    document.getElementById("chunksOutput").innerHTML =
+        chunks.map((c,i) => `<p><b>Chunk ${i+1}:</b> ${c}</p>`).join("");
+}
+
+// Fake Embedding Generator
+function fakeEmbedding(text) {
+    return text.split("").reduce((acc,char) => acc + char.charCodeAt(0),0);
+}
+
+// Step 2: RAG Flow
+function runRAG() {
+    const question = document.getElementById("question").value;
+
+    if (!question || chunks.length === 0) {
+        alert("Please add documents and question first.");
+        return;
+    }
+
+    // Generate embeddings
+    const embeddings = chunks.map(c => ({
+        text: c,
+        vector: fakeEmbedding(c)
+    }));
+
+    const questionEmbedding = fakeEmbedding(question);
+
+    document.getElementById("embeddingOutput").innerHTML =
+        embeddings.map(e => `<p>${e.vector}</p>`).join("");
+
+    // Vector Search (simple similarity)
+    let bestMatch = embeddings.reduce((prev, curr) => 
+        Math.abs(curr.vector - questionEmbedding) < 
+        Math.abs(prev.vector - questionEmbedding) ? curr : prev
+    );
+
+    document.getElementById("retrievalOutput").innerHTML =
+        `<p>${bestMatch.text}</p>`;
+
+    // Augmented Prompt
+    const augmentedPrompt = `
+Answer the question using the context below:
+
+Context:
+${bestMatch.text}
+
+Question:
+${question}
+`;
+
+    document.getElementById("promptOutput").innerText = augmentedPrompt;
+
+    // Fake LLM Response
+    const response = `Based on the retrieved context, the answer is:
+"${bestMatch.text}"
+(This simulates how an LLM would answer using retrieved knowledge.)`;
+
+    document.getElementById("finalOutput").innerText = response;
+}
+</script>
+
+</body>
+</html>
