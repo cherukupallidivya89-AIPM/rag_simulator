@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
 <title>RAG Simulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
     * {
@@ -17,194 +16,198 @@
     body {
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: white;
-        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 100vh;
     }
 
     .container {
         width: 95%;
         max-width: 1200px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
         padding: 20px;
+        box-shadow: 0 0 40px rgba(0,0,0,0.5);
     }
 
     h1 {
         text-align: center;
         margin-bottom: 20px;
-        font-size: 32px;
-        letter-spacing: 1px;
+        font-weight: 600;
     }
 
-    .card {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        padding: 20px;
-        border-radius: 16px;
+    .pipeline {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 20px;
-        transition: 0.3s ease;
     }
 
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    .step {
+        flex: 1;
+        margin: 5px;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.08);
+        text-align: center;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .step.active {
+        background: #00d4ff;
+        color: black;
+        transform: scale(1.05);
     }
 
     textarea, input {
         width: 100%;
         padding: 10px;
-        border-radius: 8px;
-        border: none;
         margin-top: 10px;
-        margin-bottom: 10px;
+        border-radius: 10px;
+        border: none;
+        resize: none;
     }
 
     button {
+        margin-top: 10px;
         padding: 10px 20px;
-        border-radius: 8px;
+        border-radius: 10px;
         border: none;
-        background: #00c6ff;
-        color: black;
-        font-weight: bold;
+        background: #00d4ff;
         cursor: pointer;
-        transition: 0.3s;
-    }
-
-    button:hover {
-        background: #0072ff;
-        color: white;
+        font-weight: bold;
     }
 
     .output {
-        margin-top: 10px;
-        padding: 10px;
-        background: rgba(0,0,0,0.4);
-        border-radius: 8px;
-        max-height: 200px;
-        overflow-y: auto;
-        font-size: 14px;
+        margin-top: 20px;
+        background: rgba(255,255,255,0.08);
+        padding: 15px;
+        border-radius: 12px;
+        min-height: 100px;
     }
 
-    .steps {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 15px;
+    .chunk {
+        padding: 5px;
+        margin: 5px 0;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
     }
 
     .highlight {
-        border: 2px solid #00ffcc;
+        background: #00ffcc;
+        color: black;
     }
-
 </style>
 </head>
-
 <body>
 
 <div class="container">
-    <h1>🔍 RAG (Retrieval-Augmented Generation) Simulator</h1>
+    <h1>🔍 RAG Pipeline Simulator</h1>
 
-    <div class="card">
-        <h3>Step 1: Add Knowledge Base</h3>
-        <textarea id="documents" rows="5" placeholder="Paste knowledge text here..."></textarea>
-        <button onclick="chunkText()">Create Chunks</button>
-        <div class="output" id="chunksOutput"></div>
+    <div class="pipeline">
+        <div class="step" id="step1">1️⃣ Chunking</div>
+        <div class="step" id="step2">2️⃣ Embedding</div>
+        <div class="step" id="step3">3️⃣ Vector Search</div>
+        <div class="step" id="step4">4️⃣ Context Injection</div>
+        <div class="step" id="step5">5️⃣ LLM Response</div>
     </div>
 
-    <div class="card">
-        <h3>Step 2: Ask a Question</h3>
-        <input id="question" placeholder="Ask something from the knowledge base..." />
-        <button onclick="runRAG()">Run RAG</button>
-    </div>
+    <label>📄 Knowledge Base</label>
+    <textarea id="docs" rows="4">
+RAG stands for Retrieval Augmented Generation. 
+It improves LLM responses using external documents.
+Vector databases store embeddings.
+Embeddings represent semantic meaning.
+    </textarea>
 
-    <div class="steps">
-        <div class="card">
-            <h3>Embeddings</h3>
-            <div class="output" id="embeddingOutput"></div>
-        </div>
+    <label>❓ User Question</label>
+    <input id="query" placeholder="Ask something..." />
 
-        <div class="card">
-            <h3>Vector Search Result</h3>
-            <div class="output" id="retrievalOutput"></div>
-        </div>
+    <button onclick="runRAG()">Run RAG Simulation</button>
 
-        <div class="card">
-            <h3>Augmented Prompt</h3>
-            <div class="output" id="promptOutput"></div>
-        </div>
-
-        <div class="card">
-            <h3>Generated Response</h3>
-            <div class="output" id="finalOutput"></div>
-        </div>
-    </div>
-
+    <div class="output" id="output"></div>
 </div>
 
 <script>
-let chunks = [];
 
-// Step 1: Chunking
-function chunkText() {
-    const text = document.getElementById("documents").value;
-    chunks = text.split(".").map(c => c.trim()).filter(c => c.length > 10);
-    document.getElementById("chunksOutput").innerHTML =
-        chunks.map((c,i) => `<p><b>Chunk ${i+1}:</b> ${c}</p>`).join("");
+const steps = document.querySelectorAll(".step");
+
+function activateStep(index) {
+    steps.forEach(s => s.classList.remove("active"));
+    steps[index].classList.add("active");
 }
 
-// Fake Embedding Generator
 function fakeEmbedding(text) {
-    return text.split("").reduce((acc,char) => acc + char.charCodeAt(0),0);
+    return text.split("").reduce((a,c)=>a+c.charCodeAt(0),0);
 }
 
-// Step 2: RAG Flow
 function runRAG() {
-    const question = document.getElementById("question").value;
+    const docs = document.getElementById("docs").value;
+    const query = document.getElementById("query").value;
+    const output = document.getElementById("output");
 
-    if (!question || chunks.length === 0) {
-        alert("Please add documents and question first.");
-        return;
-    }
+    output.innerHTML = "";
 
-    // Generate embeddings
-    const embeddings = chunks.map(c => ({
-        text: c,
-        vector: fakeEmbedding(c)
-    }));
+    // Step 1: Chunking
+    activateStep(0);
+    const chunks = docs.split(".");
+    setTimeout(() => {
+        output.innerHTML = "<h3>Chunks:</h3>";
+        chunks.forEach(c => {
+            if(c.trim()){
+                output.innerHTML += `<div class="chunk">${c.trim()}</div>`;
+            }
+        });
+    }, 500);
 
-    const questionEmbedding = fakeEmbedding(question);
+    // Step 2: Embedding
+    setTimeout(() => {
+        activateStep(1);
+        output.innerHTML += "<h3>Embeddings Created ✔</h3>";
+    }, 1500);
 
-    document.getElementById("embeddingOutput").innerHTML =
-        embeddings.map(e => `<p>${e.vector}</p>`).join("");
+    // Step 3: Vector Search
+    setTimeout(() => {
+        activateStep(2);
+        const queryEmbedding = fakeEmbedding(query);
+        let bestMatch = "";
+        let bestScore = Infinity;
 
-    // Vector Search (simple similarity)
-    let bestMatch = embeddings.reduce((prev, curr) => 
-        Math.abs(curr.vector - questionEmbedding) < 
-        Math.abs(prev.vector - questionEmbedding) ? curr : prev
-    );
+        chunks.forEach(chunk => {
+            const score = Math.abs(fakeEmbedding(chunk) - queryEmbedding);
+            if(score < bestScore) {
+                bestScore = score;
+                bestMatch = chunk;
+            }
+        });
 
-    document.getElementById("retrievalOutput").innerHTML =
-        `<p>${bestMatch.text}</p>`;
+        output.innerHTML += `<h3>Top Retrieved Chunk:</h3>
+            <div class="chunk highlight">${bestMatch}</div>`;
+        
+        window.bestMatch = bestMatch;
+    }, 2500);
 
-    // Augmented Prompt
-    const augmentedPrompt = `
-Answer the question using the context below:
+    // Step 4: Context Injection
+    setTimeout(() => {
+        activateStep(3);
+        output.innerHTML += `<h3>Prompt Sent to LLM:</h3>
+        <div class="chunk">Context: ${window.bestMatch}<br>
+        Question: ${query}</div>`;
+    }, 3500);
 
-Context:
-${bestMatch.text}
-
-Question:
-${question}
-`;
-
-    document.getElementById("promptOutput").innerText = augmentedPrompt;
-
-    // Fake LLM Response
-    const response = `Based on the retrieved context, the answer is:
-"${bestMatch.text}"
-(This simulates how an LLM would answer using retrieved knowledge.)`;
-
-    document.getElementById("finalOutput").innerText = response;
+    // Step 5: LLM Response
+    setTimeout(() => {
+        activateStep(4);
+        output.innerHTML += `<h3>LLM Response:</h3>
+        <div class="chunk highlight">
+        Based on the retrieved document: "${window.bestMatch}", 
+        here is the answer to your question: "${query}".
+        </div>`;
+    }, 4500);
 }
+
 </script>
 
 </body>
