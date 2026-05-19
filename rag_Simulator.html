@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Divya Cherukupalli | Futuristic Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --primary: #00f5ff;
+            --secondary: #9333ea;
+            --text-light: #e2e8f0;
+            --glass: rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
+        }
+
+        header p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+            padding-bottom: 4rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px var(--secondary);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            margin: 0.6rem 0;
+        }
+
+        .skills span {
+            display: inline-block;
+            background: rgba(0,245,255,0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            margin: 0.4rem;
+            border: 1px solid var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 40px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: var(--primary);
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Divya Cherukupalli</h1>
+    <p><span id="typing"></span><span class="cursor"></span></p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Profile</h2>
+        <p>Forward-thinking professional passionate about innovation, continuous learning, and building impactful solutions. Adept at blending creativity with analytical thinking to solve real-world challenges.</p>
+    </div>
+
+    <div class="card">
+        <h2>Skills</h2>
+        <div class="skills">
+            <span>Problem Solving</span>
+            <span>Communication</span>
+            <span>Leadership</span>
+            <span>Technology Enthusiast</span>
+            <span>Adaptability</span>
+            <span>Team Collaboration</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Experience</h2>
+        <ul>
+            <li><strong>Innovative Project Contributor</strong> – Led and contributed to forward-thinking initiatives integrating technology and strategy.</li>
+            <li><strong>Team Collaborator</strong> – Worked in cross-functional teams to drive measurable results and continuous improvement.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Education</h2>
+        <ul>
+            <li>Bachelor's Degree (Add Your Major & University)</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Contact</h2>
+        <p>Email: your.email@example.com</p>
+        <p>LinkedIn: linkedin.com/in/yourprofile</p>
+        <a href="#" class="btn">Download Resume</a>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Divya Cherukupalli | Designed with a Futuristic Vision
+</footer>
+
+<script>
+    const roles = [
+        "Future Innovator",
+        "Creative Thinker",
+        "Tech Enthusiast",
+        "Lifelong Learner"
+    ];
+
+    let roleIndex = 0;
+    let charIndex = 0;
+    const typingElement = document.getElementById("typing");
+
+    function typeEffect() {
+        if (charIndex < roles[roleIndex].length) {
+            typingElement.textContent += roles[roleIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(typeEffect, 80);
+        } else {
+            setTimeout(eraseEffect, 1500);
+        }
+    }
+
+    function eraseEffect() {
+        if (charIndex > 0) {
+            typingElement.textContent = roles[roleIndex].substring(0, charIndex - 1);
+            charIndex--;
+            setTimeout(eraseEffect, 50);
+        } else {
+            roleIndex = (roleIndex + 1) % roles.length;
+            setTimeout(typeEffect, 300);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        typeEffect();
+    });
+</script>
+
+</body>
+</html>
